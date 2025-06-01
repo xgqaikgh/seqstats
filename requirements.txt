@@ -1,0 +1,5 @@
+pysam
+biopython
+matplotlib
+seaborn
+pandas
