@@ -10,19 +10,3 @@
 5. 可视化：
 6. 测序长度分布
 7. 比对质量分布（仅 SAM/BAM）
-## 结构
-seqstats_pkg/
-├── seqstats/                    # 主包
-│   ├── __init__.py
-│   ├── fastq_analysis.py        # FASTQ 分析
-│   ├── sam_bam_analysis.py      # SAM/BAM 分析
-│   ├── plot.py                  # 可视化
-│   └── utils.py                 # 工具函数（如路径判断等）
-├── example/                     # 示例目录
-│   ├── SRR098026.fastq.gz
-│   ├── SRR098026.sam
-│   ├── SRR098026.bam
-│   └── run_analysis.py          # 使用示例
-├── setup.py                     # pip 安装脚本
-├── README.md                    # 项目说明
-└── requirements.txt             # 依赖列表
