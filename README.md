@@ -1,4 +1,3 @@
-[TOC]
 # README
 ## 功能
 对 .sam、.bam、.fastq.gz 文件进行基本统计分析，并生成可视化图表。
