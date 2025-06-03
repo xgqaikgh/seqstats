@@ -1,0 +1,3 @@
+vcfs/*.bcf
+vcfs/*.bam
+example/data/*.bam
