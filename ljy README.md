@@ -1,37 +1,53 @@
-# 📦 新包结构：`genoanalysis_pkg/`
-
-genoanalysis_pkg/
-├── genoanalysis/                         # 主功能包
-│   ├── __init__.py
-│   ├── fastq_analysis.py                 # FASTQ 分析
-│   ├── sam_bam_analysis.py              # SAM/BAM 分析
-│   ├── variant_data.py                   # VCF 查询/统计/可视化
-│   ├── variant_pipeline.py               # 输入到 VCF 的一体化流程（含 GenBank 支持）
-│   ├── plot.py                           # 通用可视化函数
-│   └── utils.py                          # 公共函数：路径、格式判断等
-├── example/
-│   ├── SRR098026.fastq.gz
-│   ├── SRR098026.sam
-│   ├── SRR098026.bam
-│   ├── test_example.ipynb               # 原始测试文件保留
-│   ├── test_example.pdf
-│   └── run_analysis.py                  # 统一的运行脚本
-├── vcfs/                                 # 存放 vcf 文件
-│   └── SRR098026_final.vcf
-├── ref/                                  # 参考基因组/注释
-│   ├── ecoli_rel606.fasta
-│   └── ecoli_rel606.gtf
-├── setup.py
-├── requirements.txt
-└── README.md
 
 # 🔧 核心模块说明
+
+| 模块文件                               | 功能说明                        |
+| ---------------------------------- | --------------------------- |
+| `variant_data.py`                  | VCF 文件加载、查询、统计和可视化          |
+| `variant_pipeline.py`              | 从 FASTQ/SAM/BAM 到 VCF 的自动流程 |
+| `format_convert_and_align.py`  | 多格式输入统一转为 FASTA 并生成 VCF     |
+
+### ✅ format_convert_and_align.py模块功能说明
+
+该模块包含两个函数:
+
+1. convert_to_fasta(input_path, output_fasta)
+将下列格式统一转换为 FASTA：
+.gb, .gbk（GenBank）
+.fasta.gz
+.fasta, .fa
+.sam → 自动转 .bam 再转 fasta
+.bam → 用 samtools fasta 提取序列
+
+2. call_variants_from_fasta(fasta_path, ref_path, output_vcf)
+用以下流程完成变异调用：
+
+```python
+FASTA → 比对 → BAM → sorted BAM → VCF
+   bwa + samtools + bcftools
+```
+
+使用方法示例
+
+``` python
+from seqstats.genoanalysis.format_convert_and_align import convert_to_fasta, call_variants_from_fasta
+
+# 输入文件（任意格式：.gb, .bam, .sam, .fasta.gz）
+
+input_path = "example/CZB199.bam"
+ref_path = "ref/ecoli_rel606.fasta"
+intermediate_fasta = "tmp/CZB199.fasta"output_vcf = "vcfs/CZB199_converted.vcf"
+# 转换为标准 FASTA
+convert_to_fasta(input_path, intermediate_fasta)
+# 与参考基因组比对并生成 VCF
+call_variants_from_fasta(intermediate_fasta, ref_path, output_vcf)
+```
 
 ### ✅`variant_data.py`
 
 类名为 `VariantData`，提供查询、合并、绘图与导出功能。已确认其输入输出与项目兼容，无需修改。可通过以下方式调用：
 
-```
+```python
 from genoanalysis.variant_data import VariantData
 vd = VariantData(vcf_dir="vcfs", ref_fasta="ref/ecoli_rel606.fasta")
 ```
@@ -43,11 +59,3 @@ vd = VariantData(vcf_dir="vcfs", ref_fasta="ref/ecoli_rel606.fasta")
 - `bwa`, `samtools`, `bcftools` 命令行
 - `Bio.SeqIO` 解析 GenBank/FASTA
 - 输出兼容 `variant_data.py`
-
-### ✅ 统一入口：`run_analysis.py`
-
-### 📦 打包配置（`setup.py`）
-
-# ✅ 兼容性说明
-
-- __未来扩展兼容__：可以保留 `genoanalysis/experimental/` 子模块放入 ChatGPT 另一段输出内容。

@@ -3,3 +3,4 @@ biopython
 matplotlib
 seaborn
 pandas
+biopython
